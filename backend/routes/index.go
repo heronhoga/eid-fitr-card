@@ -5,6 +5,6 @@ import (
 	"github.com/heronhoga/eid-fitr-card/handlers"
 )
 
-func UseRoutes(r *fiber.App) {
-	r.Get("/card", handlers.GetCard)
+func CardRoutes(r *fiber.App, h *handlers.CardHandler) {
+	r.Get("/card", h.GetCard)
 }

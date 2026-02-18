@@ -1,10 +1,10 @@
 package models
 
-type CardRequest struct {
+type GetCardRequest struct {
 	CardID string `json:"card_id"`
 }
 
-type CardResponse struct {
+type GetCardResponse struct {
 	CardID string `json:"card_id"`
 	To string `json:"to"`
 	From string `json:"from"`
