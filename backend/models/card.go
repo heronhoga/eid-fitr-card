@@ -11,3 +11,11 @@ type GetCardResponse struct {
 	Title string `json:"title"`
 	Description string `json:"description"`
 }
+
+type CreateCardRequest struct {
+	CardID string `json:"card_id"`
+	To string `json:"to"`
+	From string `json:"from"`
+	Title string `json:"title"`
+	Description string `json:"description"`
+}
