@@ -35,11 +35,17 @@ func (h *CardHandler) GetCard(ctx fiber.Ctx) error {
 	//*service
 	response, err := h.cardService.GetCard(ctx, getCardRequest)
 
-	fmt.Println(response)
+	if err != nil {
+		fmt.Println(err)
+		return ctx.Status(500).JSON(fiber.Map{
+			"message": "internal server error",
+		})
+	}
 
 	//*response
 	return ctx.Status(200).JSON(fiber.Map{
-		"message": getCardRequest.CardID,
+		"message": "success",
+		"data": response,
 	})
 }
 

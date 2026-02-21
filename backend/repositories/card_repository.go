@@ -37,3 +37,28 @@ func (r *CardRepository) CreateCard(context fiber.Ctx, request *models.Card) (st
 	return cardID, nil
 }
 
+func (r *CardRepository) GetCard(context fiber.Ctx, request models.GetCardRequest) (models.GetCardResponse, error) {
+	var response models.GetCardResponse
+
+	err := r.db.QueryRow(
+		context,
+		`SELECT "card_id", "to", "from", title, description, type
+		FROM cards
+		WHERE card_id = $1`,
+		request.CardID,
+	).Scan(
+		&response.CardID,
+		&response.To,
+		&response.From,
+		&response.Title,
+		&response.Description,
+		&response.Type,
+	)
+
+	if err != nil {
+		return models.GetCardResponse{}, err
+	}
+
+	return response, nil
+}
+

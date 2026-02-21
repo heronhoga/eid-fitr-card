@@ -18,7 +18,15 @@ func NewCardService(cardRepository *repositories.CardRepository) *CardService {
 }
 
 func (s *CardService) GetCard(ctx fiber.Ctx, request models.GetCardRequest) (models.GetCardResponse, error) {
-	return models.GetCardResponse{}, nil
+
+	card, err := s.cardRepository.GetCard(ctx, request)
+
+	if err != nil {
+		fmt.Println(err)
+		return models.GetCardResponse{}, err
+	}
+
+	return card, nil
 }
 
 func (s *CardService) CreateCard(ctx fiber.Ctx, request models.CreateCardRequest) (string, error) {
