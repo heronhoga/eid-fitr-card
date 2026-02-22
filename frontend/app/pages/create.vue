@@ -1,33 +1,34 @@
 <script setup lang="ts">
-const config = useRuntimeConfig()
+const config = useRuntimeConfig();
 
 const form = reactive({
-  to: '',
-  from: '',
-  title: '',
-  description: ''
-})
+  to: "",
+  from: "",
+  title: "",
+  description: "",
+  type: "send",
+});
 
-const loading = ref(false)
-const error = ref('')
-const success = ref(false)
+const loading = ref(false);
+const error = ref("");
+const success = ref(false);
 
 async function submitForm() {
-  loading.value = true
-  error.value = ''
+  loading.value = true;
+  error.value = "";
 
   try {
-    await $fetch('/cards', {
+    await $fetch("/cards", {
       baseURL: config.public.apiBase,
-      method: 'POST',
-      body: form
-    })
+      method: "POST",
+      body: form,
+    });
 
-    success.value = true
+    success.value = true;
   } catch (err: any) {
-    error.value = err?.data?.message || 'Failed to create card'
+    error.value = err?.data?.message || "Failed to create card";
   } finally {
-    loading.value = false
+    loading.value = false;
   }
 }
 </script>
@@ -35,13 +36,9 @@ async function submitForm() {
 <template>
   <div class="min-h-screen bg-gray-50 px-6 py-8">
     <div class="max-w-md mx-auto">
-
-      <h1 class="text-2xl font-bold text-center mb-6">
-        Create Eid Card
-      </h1>
+      <h1 class="text-2xl font-bold text-center mb-6">Create Eid Card</h1>
 
       <form @submit.prevent="submitForm" class="space-y-4">
-
         <input
           v-model="form.to"
           type="text"
@@ -79,7 +76,7 @@ async function submitForm() {
           class="w-full bg-green-600 text-white py-3 rounded-2xl font-semibold active:scale-95 transition"
           :disabled="loading"
         >
-          {{ loading ? 'Creating...' : 'Create Card' }}
+          {{ loading ? "Creating..." : "Create Card" }}
         </button>
 
         <p v-if="error" class="text-red-500 text-sm text-center">
@@ -89,9 +86,13 @@ async function submitForm() {
         <p v-if="success" class="text-green-600 text-sm text-center">
           Card created successfully
         </p>
-
       </form>
 
+      <p class="text-center mt-4">
+        <NuxtLink to="/scan" class="text-green-600 hover:underline">
+          Or scan QR Code
+        </NuxtLink>
+      </p>
     </div>
   </div>
 </template>

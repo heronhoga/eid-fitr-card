@@ -1,35 +1,34 @@
 <script setup>
-import QrScanner from 'qr-scanner'
-import { ref, onMounted, onBeforeUnmount } from 'vue'
+import QrScanner from "qr-scanner";
+import { ref, onMounted, onBeforeUnmount } from "vue";
 
-const videoRef = ref(null)
-const result = ref('')
-let scanner = null
+const videoRef = ref(null);
+const result = ref("");
+let scanner = null;
 
 onMounted(() => {
   scanner = new QrScanner(
     videoRef.value,
     (res) => {
-      result.value = res.data
-      scanner.stop()
+      result.value = res.data;
+      scanner.stop();
     },
     {
       highlightScanRegion: true,
       highlightCodeOutline: true,
-    }
-  )
+    },
+  );
 
-  scanner.start()
-})
+  scanner.start();
+});
 
 onBeforeUnmount(() => {
-  if (scanner) scanner.stop()
-})
+  if (scanner) scanner.stop();
+});
 </script>
 
 <template>
   <div class="min-h-screen bg-black flex flex-col">
-
     <!-- Header -->
     <header class="p-4 text-white text-center">
       <h1 class="text-lg font-semibold">Scan QR Code</h1>
@@ -38,13 +37,12 @@ onBeforeUnmount(() => {
     <!-- Camera Preview -->
     <div class="flex-1 flex items-center justify-center px-4">
       <div class="w-full max-w-sm relative">
-        <video
-          ref="videoRef"
-          class="w-full rounded-2xl"
-        ></video>
+        <video ref="videoRef" class="w-full rounded-2xl"></video>
 
         <!-- Scan Overlay Box -->
-        <div class="absolute inset-0 flex items-center justify-center pointer-events-none">
+        <div
+          class="absolute inset-0 flex items-center justify-center pointer-events-none"
+        >
           <div class="w-56 h-56 border-4 border-green-500 rounded-2xl"></div>
         </div>
       </div>
@@ -65,5 +63,9 @@ onBeforeUnmount(() => {
       </NuxtLink>
     </div>
 
+    <NuxtLink
+      to="/create"
+      class="m-5 p-2 text-white text-center border border-white rounded-2xl"
+      >Or create new card</NuxtLink>
   </div>
 </template>
