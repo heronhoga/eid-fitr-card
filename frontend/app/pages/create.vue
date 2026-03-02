@@ -1,6 +1,9 @@
 <script setup lang="ts">
-const config = useRuntimeConfig();
+import { useToast } from 'vue-toastification';
 
+// variables
+const config = useRuntimeConfig();
+const toast = useToast();
 const form = reactive({
   to: "",
   from: "",
@@ -8,29 +11,49 @@ const form = reactive({
   description: "",
   type: "send",
 });
-
 const loading = ref(false);
 const error = ref("");
 const success = ref(false);
+
+//interfaces
+interface CreateCardResponse {
+  card_id: number;
+  message?: string;
+}
 
 async function submitForm() {
   loading.value = true;
   error.value = "";
 
   try {
-    await $fetch("/cards", {
+    const response: CreateCardResponse = await $fetch("/cards", {
       baseURL: config.public.apiBase,
       method: "POST",
+      headers: {
+        "Application-Key": config.public.applicationKey,
+        "Content-Type": "application/json",
+      },
       body: form,
     });
 
+    // See full response
+    console.log(response);
+
+    // If your API returns: { card_id: 123 }
+    console.log(response.card_id);
+
     success.value = true;
+
+    toast.success("Card created successfully");
+
   } catch (err: any) {
     error.value = err?.data?.message || "Failed to create card";
+    toast.error(error.value);
   } finally {
     loading.value = false;
   }
 }
+
 </script>
 
 <template>

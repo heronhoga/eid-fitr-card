@@ -5,6 +5,7 @@ import (
 	"log"
 
 	"github.com/gofiber/fiber/v3"
+	"github.com/gofiber/fiber/v3/middleware/cors"
 	"github.com/heronhoga/eid-fitr-card/config"
 	"github.com/heronhoga/eid-fitr-card/handlers"
 	"github.com/heronhoga/eid-fitr-card/repositories"
@@ -34,8 +35,19 @@ func main() {
   
     app := fiber.New()
 
+	// cors
+	app.Use(cors.New(cors.Config{
+		AllowOrigins: []string{"http://localhost:3000"},
+		AllowCredentials: true,
+		AllowMethods: []string{"GET", "POST", "PUT", "DELETE"},
+	}))
+
     // routes initial
     routes.CardRoutes(app, cardHandler)
 
-    app.Listen(":3000")
+    err = app.Listen(":8000")
+
+	if err != nil {
+		log.Fatal(err)
+	}
 }

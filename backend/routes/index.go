@@ -7,6 +7,8 @@ import (
 )
 
 func CardRoutes(r *fiber.App, h *handlers.CardHandler) {
-	r.Get("/card", middlewares.ApplicationKeyMiddleware, h.GetCard)
-	r.Post("/card", middlewares.ApplicationKeyMiddleware, h.CreateCard)
+	api := r.Group("/api")
+
+	api.Get("/cards", middlewares.ApplicationKeyMiddleware, h.GetCard)
+	api.Post("/cards", middlewares.ApplicationKeyMiddleware, h.CreateCard)
 }
