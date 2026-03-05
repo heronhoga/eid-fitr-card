@@ -15,6 +15,7 @@ import QRCode from "qrcode";
 // variables
 const config = useRuntimeConfig();
 const toast = useToast();
+
 const form = reactive({
   to: "",
   from: "",
@@ -23,10 +24,15 @@ const form = reactive({
   type: "send",
 });
 
+const loading = ref(false);
+const error = ref("");
+const success = ref(false);
+
 // qr code
 const cardId = ref("");
 const showQR = ref(false);
 const qrCodeUrl = ref("");
+
 function resetForm() {
   form.to = "";
   form.from = "";
@@ -44,11 +50,17 @@ function closeQR() {
   showQR.value = false;
   resetForm();
 }
-// qr code
 
-const loading = ref(false);
-const error = ref("");
-const success = ref(false);
+function downloadQR() {
+  if (!qrCodeUrl.value) return;
+
+  const link = document.createElement("a");
+  link.href = qrCodeUrl.value;
+  link.download = `eid-card-${cardId.value}.png`;
+  document.body.appendChild(link);
+  link.click();
+  document.body.removeChild(link);
+}
 
 //interfaces
 interface CreateCardResponse {
@@ -71,12 +83,8 @@ async function submitForm() {
       body: form,
     });
 
-    // If your API returns: { card_id: 123 }
-    console.log(response.card_id);
-
     cardId.value = String(response.card_id);
 
-    // generate QR (example: link to card page)
     const qrData = `${window.location.origin}/card/${cardId.value}`;
     qrCodeUrl.value = await QRCode.toDataURL(qrData);
 
@@ -94,69 +102,111 @@ async function submitForm() {
 </script>
 
 <template>
-  <div class="min-h-screen bg-gray-50 px-6 py-8">
-    <div class="max-w-md mx-auto">
-      <h1 class="text-2xl font-bold text-center mb-6">Create Eid Card</h1>
+  <div
+    class="min-h-screen bg-gradient-to-b from-green-100 via-white to-green-50 flex flex-col"
+  >
+    <!-- Header -->
+    <header class="text-center pt-10 pb-4">
+      <h1 class="text-3xl font-bold text-green-700">✨ Create Eid Card</h1>
+      <p class="text-gray-500 text-sm mt-1">Send a digital Eid greeting</p>
+    </header>
 
-      <form @submit.prevent="submitForm" class="space-y-4">
-        <input
-          v-model="form.to"
-          type="text"
-          placeholder="To"
-          class="w-full p-3 rounded-xl border border-gray-300 focus:ring-2 focus:ring-green-500"
-          required
-        />
+    <!-- Form Container -->
+    <main class="flex-1 flex items-center justify-center px-6 pb-12">
+      <div class="bg-white w-full max-w-md rounded-3xl shadow-xl p-8">
+        <form @submit.prevent="submitForm" class="space-y-5">
+          <div>
+            <label class="text-sm text-gray-600">To</label>
+            <input
+              v-model="form.to"
+              type="text"
+              placeholder="Recipient name"
+              class="mt-1 w-full p-3 rounded-xl border border-gray-300 focus:ring-2 focus:ring-green-500"
+              required
+            />
+          </div>
 
-        <input
-          v-model="form.from"
-          type="text"
-          placeholder="From"
-          class="w-full p-3 rounded-xl border border-gray-300 focus:ring-2 focus:ring-green-500"
-          required
-        />
+          <div>
+            <label class="text-sm text-gray-600">From</label>
+            <input
+              v-model="form.from"
+              type="text"
+              placeholder="Your name"
+              class="mt-1 w-full p-3 rounded-xl border border-gray-300 focus:ring-2 focus:ring-green-500"
+              required
+            />
+          </div>
 
-        <input
-          v-model="form.title"
-          type="text"
-          placeholder="Card Title"
-          class="w-full p-3 rounded-xl border border-gray-300 focus:ring-2 focus:ring-green-500"
-          required
-        />
+          <div>
+            <label class="text-sm text-gray-600">Card Title</label>
+            <input
+              v-model="form.title"
+              type="text"
+              placeholder="Eid Mubarak"
+              class="mt-1 w-full p-3 rounded-xl border border-gray-300 focus:ring-2 focus:ring-green-500"
+              required
+            />
+          </div>
 
-        <textarea
-          v-model="form.description"
-          placeholder="Write your message..."
-          rows="4"
-          class="w-full p-3 rounded-xl border border-gray-300 focus:ring-2 focus:ring-green-500"
-          required
-        ></textarea>
+          <div>
+            <label class="text-sm text-gray-600">Message</label>
+            <textarea
+              v-model="form.description"
+              rows="4"
+              placeholder="Write your Eid wishes..."
+              class="mt-1 w-full p-3 rounded-xl border border-gray-300 focus:ring-2 focus:ring-green-500"
+              required
+            ></textarea>
+          </div>
 
-        <button
-          type="submit"
-          class="w-full bg-green-600 text-white py-3 rounded-2xl font-semibold active:scale-95 transition"
-          :disabled="loading"
-        >
-          {{ loading ? "Creating..." : "Create Card" }}
-        </button>
+          <button
+            type="submit"
+            class="w-full bg-green-600 hover:bg-green-700 text-white py-3 rounded-2xl font-semibold shadow-md transition active:scale-95"
+            :disabled="loading"
+          >
+            {{ loading ? "Creating Card..." : "Create Card" }}
+          </button>
 
-        <p v-if="error" class="text-red-500 text-sm text-center">
-          {{ error }}
+          <p v-if="error" class="text-red-500 text-sm text-center">
+            {{ error }}
+          </p>
+
+          <p v-if="success" class="text-green-600 text-sm text-center">
+            Card created successfully
+          </p>
+        </form>
+
+        <p class="text-center mt-6 text-sm text-gray-500">
+          or
+          <NuxtLink
+            to="/scan"
+            class="text-green-600 font-medium hover:underline"
+          >
+            scan a QR card
+          </NuxtLink>
         </p>
+      </div>
+    </main>
 
-        <p v-if="success" class="text-green-600 text-sm text-center">
-          Card created successfully
-        </p>
-      </form>
-
-      <!-- QR Modal -->
+    <!-- QR Modal -->
+    <div
+      v-if="showQR"
+      class="fixed inset-0 bg-black/60 flex items-center justify-center z-50 px-4"
+    >
       <div
-        v-if="showQR"
-        class="fixed inset-0 bg-black/50 flex items-center justify-center z-50"
+        class="bg-white rounded-3xl p-6 w-full max-w-sm text-center shadow-xl space-y-4"
       >
-        <div class="bg-white p-6 rounded-2xl w-80 text-center space-y-4">
-          <h2 class="text-lg font-semibold">Scan QR Code</h2>
+        <h2 class="text-xl font-semibold text-green-700">📷 Scan Your Card</h2>
 
-          <img :src="qrCodeUrl" alt="QR Code" class="mx-auto w-48 h-48" />
+        <img :src="qrCodeUrl" alt="QR Code" class="mx-auto w-48 h-48" />
+
+        <div class="space-y-2">
+          <button
+            @click="downloadQR"
+            class="w-full bg-white border border-green-600 text-green-600 py-2 rounded-xl font-medium hover:bg-green-50"
+          >
+            Download QR Code
+          </button>
 
           <button
             @click="closeQR"
@@ -166,12 +216,6 @@ async function submitForm() {
           </button>
         </div>
       </div>
-
-      <p class="text-center mt-4">
-        <NuxtLink to="/scan" class="text-green-600 hover:underline">
-          Or scan QR Code
-        </NuxtLink>
-      </p>
     </div>
   </div>
 </template>

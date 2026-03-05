@@ -16,7 +16,9 @@ const videoRef = ref(null);
 const result = ref("");
 let scanner = null;
 
-onMounted(() => {
+function startScanner() {
+  if (!videoRef.value) return;
+
   scanner = new QrScanner(
     videoRef.value,
     (res) => {
@@ -26,10 +28,19 @@ onMounted(() => {
     {
       highlightScanRegion: true,
       highlightCodeOutline: true,
-    },
+    }
   );
 
   scanner.start();
+}
+
+function restartScan() {
+  result.value = "";
+  if (scanner) scanner.start();
+}
+
+onMounted(() => {
+  startScanner();
 });
 
 onBeforeUnmount(() => {
@@ -38,45 +49,73 @@ onBeforeUnmount(() => {
 </script>
 
 <template>
-  <div class="min-h-screen bg-black flex flex-col">
+  <div class="min-h-screen bg-gradient-to-b from-black to-gray-900 flex flex-col">
+
     <!-- Header -->
-    <header class="p-4 text-white text-center">
-      <h1 class="text-lg font-semibold">Scan QR Code</h1>
+    <header class="pt-8 pb-4 text-center text-white">
+      <h1 class="text-2xl font-semibold">
+        Scan QR Code
+      </h1>
+      <p class="text-sm text-gray-400 mt-1">
+        Point your camera at the QR code
+      </p>
     </header>
 
-    <!-- Camera Preview -->
-    <div class="flex-1 flex items-center justify-center px-4">
-      <div class="w-full max-w-sm relative">
-        <video ref="videoRef" class="w-full rounded-2xl"></video>
+    <!-- Camera Area -->
+    <main class="flex-1 flex items-center justify-center px-6">
 
-        <!-- Scan Overlay Box -->
-        <div
-          class="absolute inset-0 flex items-center justify-center pointer-events-none"
-        >
-          <div class="w-56 h-56 border-4 border-green-500 rounded-2xl"></div>
+      <div class="relative w-full max-w-sm">
+
+        <video
+          ref="videoRef"
+          class="w-full rounded-3xl shadow-lg"
+        ></video>
+
+        <!-- Scan Frame -->
+        <div class="absolute inset-0 flex items-center justify-center pointer-events-none">
+          <div class="w-64 h-64 border-4 border-green-500 rounded-2xl shadow-[0_0_20px_rgba(34,197,94,0.6)]"></div>
         </div>
-      </div>
-    </div>
 
-    <!-- Result -->
-    <div v-if="result" class="bg-white p-4 rounded-t-3xl">
-      <p class="text-sm text-gray-500 mb-1">Scanned Result:</p>
-      <p class="text-green-600 break-all font-medium">
-        {{ result }}
-      </p>
+      </div>
+
+    </main>
+
+    <!-- Result Panel -->
+    <div
+      v-if="result"
+      class="bg-white rounded-t-3xl p-6 space-y-4 shadow-2xl"
+    >
+      <div class="text-center">
+        <p class="text-sm text-gray-500">Scanned Link</p>
+        <p class="text-green-600 break-all font-medium mt-1">
+          {{ result }}
+        </p>
+      </div>
 
       <NuxtLink
         :to="result"
-        class="block mt-4 w-full text-center bg-green-600 text-white py-3 rounded-2xl font-semibold"
+        class="block w-full text-center bg-green-600 hover:bg-green-700 text-white py-3 rounded-2xl font-semibold"
       >
-        Open Link
+        Open Card
+      </NuxtLink>
+
+      <button
+        @click="restartScan"
+        class="w-full border border-green-600 text-green-600 py-3 rounded-2xl font-semibold hover:bg-green-50"
+      >
+        Scan Again
+      </button>
+    </div>
+
+    <!-- Bottom Navigation -->
+    <div class="p-6 text-center">
+      <NuxtLink
+        to="/create"
+        class="text-white border border-white px-6 py-2 rounded-xl hover:bg-white hover:text-black transition"
+      >
+        Create New Card
       </NuxtLink>
     </div>
 
-    <NuxtLink
-      to="/create"
-      class="m-5 p-2 text-white text-center border border-white rounded-2xl"
-      >Or create new card</NuxtLink
-    >
   </div>
 </template>
