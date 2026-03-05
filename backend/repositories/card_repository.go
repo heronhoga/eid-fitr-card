@@ -1,60 +1,40 @@
 package repositories
 
 import (
-	"github.com/gofiber/fiber/v3"
+	"context"
+
 	"github.com/heronhoga/eid-fitr-card/models"
-	"github.com/jackc/pgx/v5"
+	"go.mongodb.org/mongo-driver/v2/bson"
+	"go.mongodb.org/mongo-driver/v2/mongo"
 )
 
 type CardRepository struct {
-	db *pgx.Conn
+	collection *mongo.Collection
 }
 
-func NewCardRepository(db *pgx.Conn) *CardRepository {
-	return &CardRepository{db: db}
+func NewCardRepository(db *mongo.Database) *CardRepository {
+	return &CardRepository{
+		collection: db.Collection("cards"),
+	}
 }
 
-func (r *CardRepository) CreateCard(context fiber.Ctx, request *models.Card) (string, error) {
-	var cardID string
+func (r *CardRepository) CreateCard(ctx context.Context, request *models.Card) (string, error) {
 
-	err := r.db.QueryRow(
-		context,
-		`INSERT INTO cards ("card_id", "to", "from", title, description, type)
-		VALUES ($1, $2, $3, $4, $5, $6)
-		RETURNING card_id`,
-		request.CardID,
-		request.To,
-		request.From,
-		request.Title,
-		request.Description,
-		request.Type,
-	).Scan(&cardID)
-
+	_, err := r.collection.InsertOne(ctx, request)
 	if err != nil {
 		return "", err
 	}
 
-	return cardID, nil
+	return request.CardID, nil
 }
 
-func (r *CardRepository) GetCard(context fiber.Ctx, request models.GetCardRequest) (models.GetCardResponse, error) {
+func (r *CardRepository) GetCard(ctx context.Context, request models.GetCardRequest) (models.GetCardResponse, error) {
+
 	var response models.GetCardResponse
 
-	err := r.db.QueryRow(
-		context,
-		`SELECT "card_id", "to", "from", title, description, type
-		FROM cards
-		WHERE card_id = $1`,
-		request.CardID,
-	).Scan(
-		&response.CardID,
-		&response.To,
-		&response.From,
-		&response.Title,
-		&response.Description,
-		&response.Type,
-	)
+	filter := bson.M{"cardid": request.CardID}
 
+	err := r.collection.FindOne(ctx, filter).Decode(&response)
 	if err != nil {
 		return models.GetCardResponse{}, err
 	}

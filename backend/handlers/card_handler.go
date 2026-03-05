@@ -37,6 +37,13 @@ func (h *CardHandler) GetCard(ctx fiber.Ctx) error {
 
 	if err != nil {
 		fmt.Println(err)
+
+		if err.Error() == "mongo: no documents in result" {
+			return ctx.Status(404).JSON(fiber.Map{
+				"message": "card not found",
+			})
+		}
+		
 		return ctx.Status(500).JSON(fiber.Map{
 			"message": "internal server error",
 		})
@@ -50,7 +57,7 @@ func (h *CardHandler) GetCard(ctx fiber.Ctx) error {
 }
 
 func (h *CardHandler) CreateCard(ctx fiber.Ctx) error {
-	//request
+	//*request
 	var createCardRequest models.CreateCardRequest
 	err := ctx.Bind().Body(&createCardRequest)
 	if err != nil {
@@ -64,7 +71,7 @@ func (h *CardHandler) CreateCard(ctx fiber.Ctx) error {
 			"message": "all fields are required",
 		})
 	}
-	//service
+	//*service
 	card_id, err := h.cardService.CreateCard(ctx, createCardRequest)
 	if err != nil {
 		return ctx.Status(500).JSON(fiber.Map{
@@ -72,7 +79,7 @@ func (h *CardHandler) CreateCard(ctx fiber.Ctx) error {
 		})
 	}
 
-	//response
+	//*response
 	return ctx.Status(200).JSON(fiber.Map{
 		"message": "success",
 		"card_id": card_id,

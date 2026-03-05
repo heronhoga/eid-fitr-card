@@ -22,7 +22,7 @@ func (s *CardService) GetCard(ctx fiber.Ctx, request models.GetCardRequest) (mod
 	card, err := s.cardRepository.GetCard(ctx, request)
 
 	if err != nil {
-		fmt.Println(err)
+		fmt.Println("error get card:", err)
 		return models.GetCardResponse{}, err
 	}
 
@@ -31,14 +31,12 @@ func (s *CardService) GetCard(ctx fiber.Ctx, request models.GetCardRequest) (mod
 
 func (s *CardService) CreateCard(ctx fiber.Ctx, request models.CreateCardRequest) (string, error) {
 	//generate card id
-
 	newCard := &models.Card{
 		CardID: utils.GenerateCardID(),
 		To: request.To,
 		From: request.From,
 		Title: request.Title,
 		Description: request.Description,
-		Type: request.Type,
 	}
 
 	card_id, err := s.cardRepository.CreateCard(ctx, newCard)

@@ -6,7 +6,6 @@ type Card struct {
 	From string `json:"from"`
 	Title string `json:"title"`
 	Description string `json:"description"`
-	Type string `json:"type"`
 }
 type GetCardRequest struct {
 	CardID string `json:"card_id"`
@@ -18,7 +17,6 @@ type GetCardResponse struct {
 	From string `json:"from"`
 	Title string `json:"title"`
 	Description string `json:"description"`
-	Type string `json:"type"`
 }
 
 type CreateCardRequest struct {
@@ -26,5 +24,4 @@ type CreateCardRequest struct {
 	From string `json:"from"`
 	Title string `json:"title"`
 	Description string `json:"description"`
-	Type string `json:"type"`
 }

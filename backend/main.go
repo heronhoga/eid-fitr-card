@@ -3,6 +3,7 @@ package main
 import (
 	"context"
 	"log"
+	"os"
 
 	"github.com/gofiber/fiber/v3"
 	"github.com/gofiber/fiber/v3/middleware/cors"
@@ -15,39 +16,39 @@ import (
 )
 
 func main() {
-    // env initial
-    err := godotenv.Load()
-    if err != nil {
-        log.Fatal("Error loading .env file")
-    }
+	// load env
+	if err := godotenv.Load(); err != nil {
+		log.Fatal("Error loading .env file")
+	}
 
-    // db initial
-    db, err := config.NewDBConn()
+	// connect MongoDB
+	client, err := config.NewDBConn()
 	if err != nil {
 		log.Fatal(err)
 	}
-	defer db.Close(context.Background())
+	defer client.Disconnect(context.Background())
 
-    // layers initial
-	cardRepo := repositories.NewCardRepository(db)
-    cardService := services.NewCardService(cardRepo)
-    cardHandler := handlers.NewCardHandler(cardService)
-  
-    app := fiber.New()
+	// select database
+	database := client.Database(os.Getenv("DB_NAME"))
 
-	// cors
+	// layers
+	cardRepo := repositories.NewCardRepository(database)
+	cardService := services.NewCardService(cardRepo)
+	cardHandler := handlers.NewCardHandler(cardService)
+
+	app := fiber.New()
+
+	// CORS
 	app.Use(cors.New(cors.Config{
-		AllowOrigins: []string{"http://localhost:3000"},
+		AllowOrigins:     []string{"http://localhost:3000"},
 		AllowCredentials: true,
-		AllowMethods: []string{"GET", "POST", "PUT", "DELETE"},
+		AllowMethods:     []string{"GET", "POST", "PUT", "DELETE"},
 	}))
 
-    // routes initial
-    routes.CardRoutes(app, cardHandler)
+	// routes
+	routes.CardRoutes(app, cardHandler)
 
-    err = app.Listen(":8000")
-
-	if err != nil {
+	if err := app.Listen(":8000"); err != nil {
 		log.Fatal(err)
 	}
 }
