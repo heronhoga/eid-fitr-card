@@ -1,3 +1,15 @@
+<script setup lang="ts">
+  useHead({
+    title: 'Eid Card | By Hoga',
+    meta: [
+      {
+        name: 'description',
+        content: 'Eid Mubarak',
+      },
+    ],
+  })
+</script>
+
 <template>
   <div class="min-h-screen bg-gradient-to-b from-green-50 to-white flex flex-col">
 

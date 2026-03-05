@@ -1,4 +1,14 @@
 <script setup lang="ts">
+useHead({
+  title: "Create New Card",
+  meta: [
+    {
+      name: "description",
+      content: "Eid Mubarak",
+    },
+  ],
+});
+
 import { useToast } from "vue-toastification";
 import QRCode from "qrcode";
 

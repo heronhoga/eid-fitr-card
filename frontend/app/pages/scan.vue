@@ -1,4 +1,14 @@
 <script setup>
+useHead({
+  title: "Scan QR Code",
+  meta: [
+    {
+      name: "description",
+      content: "Eid Mubarak",
+    },
+  ],
+});
+
 import QrScanner from "qr-scanner";
 import { ref, onMounted, onBeforeUnmount } from "vue";
 
@@ -66,6 +76,7 @@ onBeforeUnmount(() => {
     <NuxtLink
       to="/create"
       class="m-5 p-2 text-white text-center border border-white rounded-2xl"
-      >Or create new card</NuxtLink>
+      >Or create new card</NuxtLink
+    >
   </div>
 </template>
