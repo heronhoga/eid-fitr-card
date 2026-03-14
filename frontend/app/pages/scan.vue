@@ -89,7 +89,7 @@ onBeforeUnmount(() => {
           class="absolute inset-0 flex items-center justify-center pointer-events-none"
         >
           <div
-            class="w-64 h-64 border-4 border-green-500 rounded-2xl shadow-[0_0_20px_rgba(34,197,94,0.6)]"
+            class="w-64 h-64 border-4 border-[#10b981] rounded-2xl shadow-[0_0_20px_rgba(34,197,94,0.6)]"
           ></div>
         </div>
       </div>
@@ -102,7 +102,7 @@ onBeforeUnmount(() => {
     >
       <div class="text-center">
         <p class="text-sm text-gray-500">Scanned Link</p>
-        <p class="text-green-600 break-all font-medium mt-1">
+        <p class="text-[#10b981] break-all font-medium mt-1">
           {{ result }}
         </p>
       </div>
@@ -110,14 +110,14 @@ onBeforeUnmount(() => {
       <NuxtLink
         :to="result"
         target="_blank"
-        class="block w-full text-center bg-green-600 hover:bg-green-700 text-white py-3 rounded-2xl font-semibold"
+        class="block w-full text-center bg-[#10b981] hover:bg-[#059669] text-white py-3 rounded-2xl font-semibold"
       >
         Open Card
       </NuxtLink>
 
       <button
         @click="restartScan"
-        class="w-full border border-green-600 text-green-600 py-3 rounded-2xl font-semibold hover:bg-green-50"
+        class="w-full border border-[#10b981] text-[#10b981] py-3 rounded-2xl font-semibold hover:bg-[#10b981] hover:text-white transition"
       >
         Scan Again
       </button>
@@ -127,7 +127,7 @@ onBeforeUnmount(() => {
     <div class="px-6 flex justify-center">
       <button
         @click="triggerUpload"
-        class="px-6 py-3 bg-green-600 hover:bg-green-700 text-white rounded-2xl font-semibold"
+        class="px-6 py-3 bg-[#10b981] hover:bg-[#059669] text-white rounded-2xl font-semibold"
       >
         Upload QR Image
       </button>

@@ -1,4 +1,13 @@
 <script setup lang="ts">
+useHead({
+  title: 'Eid Mubarrak 1447 H',
+  meta: [
+    {
+      name: 'description',
+      content: 'Eid Mubarak',
+    },
+  ],
+})
 import { ref, onMounted, onUnmounted } from "vue";
 
 const route = useRoute();
@@ -34,8 +43,7 @@ const audio = ref<HTMLAudioElement | null>(null);
 
 function toggleMusic() {
   if (!audio.value) {
-    // Replace this src with your actual nasheed/music file path
-    audio.value = new Audio("/eid-music.mp3");
+    audio.value = new Audio("/music.mp3");
     audio.value.loop = true;
     audio.value.volume = 0.4;
   }

@@ -100,121 +100,283 @@ async function submitForm() {
 </script>
 
 <template>
-  <div
-    class="min-h-screen bg-gradient-to-b from-green-100 via-white to-green-50 flex flex-col"
-  >
-    <!-- Header -->
-    <header class="text-center pt-10 pb-4">
-      <h1 class="text-3xl font-bold text-green-700">✨ Create Eid Card</h1>
-      <p class="text-gray-500 text-sm mt-1">Send a digital Eid greeting</p>
-    </header>
+  <div class="create-root">
+    <!-- Background -->
+    <div class="sky"></div>
 
-    <!-- Form Container -->
-    <main class="flex-1 flex items-center justify-center px-6 pb-12">
-      <div class="bg-white w-full max-w-md rounded-3xl shadow-xl p-8">
-        <form @submit.prevent="submitForm" class="space-y-5">
-          <div>
-            <label class="text-sm text-gray-600">To</label>
+    <main class="content-wrap">
+      <div class="create-card">
+        <!-- Header -->
+        <div class="header">
+          <p class="label">Create Eid Card</p>
+          <h1 class="arabic">عيد مبارك</h1>
+          <p class="subtitle">Send a digital Eid greeting</p>
+        </div>
+
+        <!-- Form -->
+        <form @submit.prevent="submitForm" class="form">
+          <!-- To -->
+          <div class="field">
+            <label>To</label>
             <input
               v-model="form.to"
               type="text"
               placeholder="Recipient name"
-              class="mt-1 w-full p-3 rounded-xl border border-gray-300 focus:ring-2 focus:ring-green-500"
-              required
               maxlength="32"
+              required
             />
-            <p class="text-xs text-gray-400 text-right">
-              {{ form.to.length }}/32
-            </p>
+            <span class="counter">{{ form.to.length }}/32</span>
           </div>
 
-          <div>
-            <label class="text-sm text-gray-600">From</label>
+          <!-- From -->
+          <div class="field">
+            <label>From</label>
             <input
               v-model="form.from"
               type="text"
               placeholder="Your name"
-              class="mt-1 w-full p-3 rounded-xl border border-gray-300 focus:ring-2 focus:ring-green-500"
-              required
               maxlength="32"
+              required
             />
-            <p class="text-xs text-gray-400 text-right">
-              {{ form.from.length }}/32
-            </p>
+            <span class="counter">{{ form.from.length }}/32</span>
           </div>
 
-          <div>
-            <label class="text-sm text-gray-600">Message</label>
+          <!-- Message -->
+          <div class="field">
+            <label>Message</label>
             <textarea
               v-model="form.description"
               rows="4"
-              placeholder="Write your Eid wishes..."
-              class="mt-1 w-full p-3 rounded-xl border border-gray-300 focus:ring-2 focus:ring-green-500"
-              required
               maxlength="256"
+              placeholder="Write your Eid wishes..."
+              required
             ></textarea>
-            <p class="text-xs text-gray-400 text-right">
-              {{ form.description.length }}/256
-            </p>
+            <span class="counter">{{ form.description.length }}/256</span>
           </div>
 
-          <button
-            type="submit"
-            class="w-full bg-green-600 hover:bg-green-700 text-white py-3 rounded-2xl font-semibold shadow-md transition active:scale-95"
-            :disabled="loading"
-          >
+          <!-- Submit -->
+          <button class="btn primary" :disabled="loading">
             {{ loading ? "Creating Card..." : "Create Card" }}
           </button>
 
-          <p v-if="error" class="text-red-500 text-sm text-center">
-            {{ error }}
-          </p>
-
-          <p v-if="success" class="text-green-600 text-sm text-center">
-            Card created successfully
-          </p>
+          <p v-if="error" class="error">{{ error }}</p>
+          <p v-if="success" class="success">Card created successfully</p>
         </form>
 
-        <p class="text-center mt-6 text-sm text-gray-500">
+        <p class="alt-link">
           or
-          <NuxtLink
-            to="/scan"
-            class="text-green-600 font-medium hover:underline"
-          >
-            scan a QR card
-          </NuxtLink>
+          <NuxtLink to="/scan">scan a QR card</NuxtLink>
         </p>
       </div>
     </main>
 
     <!-- QR Modal -->
-    <div
-      v-if="showQR"
-      class="fixed inset-0 bg-black/60 flex items-center justify-center z-50 px-4"
-    >
-      <div
-        class="bg-white rounded-3xl p-6 w-full max-w-sm text-center shadow-xl space-y-4"
-      >
-        <h2 class="text-xl font-semibold text-green-700">📷 Scan Your Card</h2>
+    <div v-if="showQR" class="modal">
+      <div class="modal-card">
+        <h2 class="modal-title">📷 Scan Your Card</h2>
 
-        <img :src="qrCodeUrl" alt="QR Code" class="mx-auto w-48 h-48" />
+        <img :src="qrCodeUrl" alt="QR Code" class="qr" />
 
-        <div class="space-y-2">
-          <button
-            @click="downloadQR"
-            class="w-full bg-white border border-green-600 text-green-600 py-2 rounded-xl font-medium hover:bg-green-50"
-          >
+        <div class="modal-actions">
+          <button @click="downloadQR" class="btn outline">
             Download QR Code
           </button>
 
-          <button
-            @click="closeQR"
-            class="w-full bg-green-600 text-white py-2 rounded-xl"
-          >
-            Close
-          </button>
+          <button @click="closeQR" class="btn primary">Close</button>
         </div>
       </div>
     </div>
   </div>
 </template>
+
+<style scoped>
+.create-root {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #04060f;
+  overflow: hidden;
+}
+
+.sky {
+  position: fixed;
+  inset: 0;
+  background: radial-gradient(
+    ellipse at 60% 0%,
+    #1a2a4a 0%,
+    #060c1a 55%,
+    #010308 100%
+  );
+  z-index: 0;
+}
+
+.content-wrap {
+  position: relative;
+  z-index: 10;
+  width: 100%;
+  max-width: 480px;
+  padding: 1rem;
+}
+
+.create-card {
+  background: linear-gradient(
+    160deg,
+    rgba(15, 28, 55, 0.92),
+    rgba(8, 18, 36, 0.97)
+  );
+  border: 1px solid rgba(255, 210, 70, 0.25);
+  border-radius: 28px;
+  padding: 2.5rem 2rem;
+  color: #e8d5a0;
+  box-shadow:
+    0 0 0 1px rgba(255, 210, 70, 0.08),
+    0 8px 40px rgba(0, 0, 0, 0.6);
+}
+
+.header {
+  text-align: center;
+  margin-bottom: 1.5rem;
+}
+
+.label {
+  font-size: 0.65rem;
+  letter-spacing: 0.35em;
+  text-transform: uppercase;
+  color: #ffd54f;
+  opacity: 0.7;
+}
+
+.arabic {
+  font-size: 1.8rem;
+  color: #ffd54f;
+  margin-top: 4px;
+}
+
+.subtitle {
+  font-size: 0.85rem;
+  opacity: 0.6;
+  margin-top: 4px;
+}
+
+.form {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.field label {
+  font-size: 0.75rem;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  color: #10b981;
+}
+
+.field input,
+.field textarea {
+  width: 100%;
+  margin-top: 6px;
+  padding: 10px 12px;
+  border-radius: 12px;
+  border: 1px solid rgba(16, 185, 129, 0.25);
+  background: rgba(255, 255, 255, 0.04);
+  color: white;
+  outline: none;
+}
+
+.field textarea {
+  resize: none;
+}
+
+.counter {
+  display: block;
+  font-size: 0.7rem;
+  opacity: 0.5;
+  text-align: right;
+}
+
+.btn {
+  padding: 12px;
+  border-radius: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  border: none;
+}
+
+.btn.primary {
+  background: #10b981;
+  color: white;
+}
+
+.btn.primary:hover {
+  background: #059669;
+}
+
+.btn.outline {
+  border: 1px solid #10b981;
+  color: #10b981;
+  background: transparent;
+}
+
+.error {
+  color: #ef9a9a;
+  font-size: 0.85rem;
+  text-align: center;
+}
+
+.success {
+  color: #10b981;
+  font-size: 0.85rem;
+  text-align: center;
+}
+
+.alt-link {
+  text-align: center;
+  margin-top: 1rem;
+  font-size: 0.8rem;
+}
+
+.alt-link a {
+  color: #10b981;
+  text-decoration: none;
+}
+
+.modal {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.7);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 50;
+}
+
+.modal-card {
+  background: linear-gradient(
+    160deg,
+    rgba(15, 28, 55, 0.95),
+    rgba(8, 18, 36, 0.98)
+  );
+  border: 1px solid rgba(255, 210, 70, 0.25);
+  border-radius: 24px;
+  padding: 2rem;
+  text-align: center;
+  width: 320px;
+}
+
+.modal-title {
+  color: #ffd54f;
+  margin-bottom: 1rem;
+}
+
+.qr {
+  width: 180px;
+  margin: 0 auto 1rem;
+}
+
+.modal-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+</style>
