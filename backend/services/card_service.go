@@ -35,7 +35,6 @@ func (s *CardService) CreateCard(ctx fiber.Ctx, request models.CreateCardRequest
 		CardID: utils.GenerateCardID(),
 		To: request.To,
 		From: request.From,
-		Title: request.Title,
 		Description: request.Description,
 	}
 

@@ -66,7 +66,7 @@ func (h *CardHandler) CreateCard(ctx fiber.Ctx) error {
 		})
 	}
 
-	if createCardRequest.To == "" || createCardRequest.From == "" || createCardRequest.Title == "" || createCardRequest.Description == "" {
+	if createCardRequest.To == "" || createCardRequest.From == "" || createCardRequest.Description == "" {
 		return ctx.Status(400).JSON(fiber.Map{
 			"message": "all fields are required",
 		})

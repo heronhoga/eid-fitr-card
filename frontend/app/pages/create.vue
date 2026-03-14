@@ -19,7 +19,6 @@ const toast = useToast();
 const form = reactive({
   to: "",
   from: "",
-  title: "",
   description: "",
   type: "send",
 });
@@ -36,7 +35,6 @@ const qrCodeUrl = ref("");
 function resetForm() {
   form.to = "";
   form.from = "";
-  form.title = "";
   form.description = "";
   form.type = "send";
 
@@ -123,7 +121,11 @@ async function submitForm() {
               placeholder="Recipient name"
               class="mt-1 w-full p-3 rounded-xl border border-gray-300 focus:ring-2 focus:ring-green-500"
               required
+              maxlength="32"
             />
+            <p class="text-xs text-gray-400 text-right">
+              {{ form.to.length }}/32
+            </p>
           </div>
 
           <div>
@@ -134,18 +136,11 @@ async function submitForm() {
               placeholder="Your name"
               class="mt-1 w-full p-3 rounded-xl border border-gray-300 focus:ring-2 focus:ring-green-500"
               required
+              maxlength="32"
             />
-          </div>
-
-          <div>
-            <label class="text-sm text-gray-600">Card Title</label>
-            <input
-              v-model="form.title"
-              type="text"
-              placeholder="Eid Mubarak"
-              class="mt-1 w-full p-3 rounded-xl border border-gray-300 focus:ring-2 focus:ring-green-500"
-              required
-            />
+            <p class="text-xs text-gray-400 text-right">
+              {{ form.from.length }}/32
+            </p>
           </div>
 
           <div>
@@ -156,7 +151,11 @@ async function submitForm() {
               placeholder="Write your Eid wishes..."
               class="mt-1 w-full p-3 rounded-xl border border-gray-300 focus:ring-2 focus:ring-green-500"
               required
+              maxlength="256"
             ></textarea>
+            <p class="text-xs text-gray-400 text-right">
+              {{ form.description.length }}/256
+            </p>
           </div>
 
           <button
